@@ -1,0 +1,40 @@
+<html>
+    <head>
+		<meta charset="utf-8">
+		<title>Tesselation and Swirl</title>
+		<link rel="stylesheet" href="../style/assign1_style.css">
+        <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        void main()
+       {
+            gl_Position = vPosition;
+        }
+        </script>
+        <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        void main()
+        {
+            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        }
+        </script>
+		<script type="text/javascript" src="../Common/webgl-utils.js"></script>
+		<script type="text/javascript" src="../Common/initShaders.js"></script>
+		<script type="text/javascript" src="../Common/MV.js"></script>
+		<script type="text/javascript" src="Assign1.js"></script>
+	</head>
+	<body>
+	    <canvas id = "canvas" width="512" height="512">
+	    </canvas>
+		<label for="slider1" id=divisionlabel>Subdivisions</label>
+		<input id = "slider1" name="Number of Subdivisions" type="range" min="0" max="32" step="1" value="0" onchange="onSubDivisionChanged(value)" ></input>
+		<output for="slider1" id=num>0</output>
+		<label for="slider2" id=anglelabel>Angle</label>
+		<input id = "slider2" name="Angle" type="range" min="0" max="360" step="1" value="0" onchange="onAngleChanged(value)" ></input>
+		<output for="slider2" id=angle>0</output>
+		<select id = "primitiveselector" onchange="onPrimitiveChanged()">
+			<option value="triangle">Triangle</option>
+			<option value="square">Square</option>
+			<option value="pentagon">Pentagon</option>
+		</select>
+	</body>
+</html>
