@@ -4,10 +4,10 @@
 var points = [];
 
 // Number of subdivisions, init to zero
-var NumTimesToSubdivide = 0;
+var NumTimesToSubdivide = 3;
 
 // Angle to swirl, init to zero (no rotation)
-var angle = 0;
+var angle = 45;
 
 var primitive = "triangle";
 
