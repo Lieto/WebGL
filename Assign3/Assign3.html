@@ -1,0 +1,92 @@
+<html>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+uniform vec3 theta;
+uniform vec3 translate;
+uniform mat4 p;
+uniform mat4 mv;
+
+void
+main()
+{
+    vec3 angles = radians( theta );
+    vec3 c = cos( angles );
+    vec3 s = sin( angles );
+
+    mat4 rotX = mat4(
+        1.0, 0.0, 0.0, 0.0,
+        0.0, c.x, s.x, 0.0,
+        0.0, -s.x, c.x, 0.0,
+        0.0, 0.0, 0.0, 1.0
+
+    );
+
+    mat4 rotY = mat4(
+        c.y, 0.0, -s.y, 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        s.y, 0.0, c.y, 0.0,
+        0.0, 0.0, 0.0, 1.0
+
+    );
+
+    mat4 rotZ = mat4(
+        c.z, -s.z, 0.0, 0.0,
+        s.z, c.z, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 1.0
+
+    );
+
+    mat4 trans = mat4(
+        1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        translate.x, translate.y, translate.z, 1.0
+    );
+
+    gl_Position = p * mv * trans * rotZ * rotY * rotX * vPosition;
+}
+
+</script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+
+uniform vec4 fColor;
+
+void
+main()
+{
+    gl_FragColor = fColor;
+}
+</script>
+
+<head>
+    <!-- Stylesheet for app -->
+<link rel="stylesheet" type="text/css" href="./Assign3.css">
+    <!-- WebGl utilities -->
+<script type="text/javascript" src="./Common/webgl-utils.js"></script>
+<script type="text/javascript" src="./Common/initShaders.js"></script>
+<script type="text/javascript" src="./Common/MV.js"></script>
+<!-- User interface for controls -->
+    <script type="text/javascript" src="./Common/dat.gui.min.js"></script>
+    <!--CAD app -->
+<script type="text/javascript" src="./assign3.js"></script>
+</head>
+
+<>
+<div id="header">
+    <h1>CAD Exercise</h1>
+</div>
+<div id="canvas-section">
+    <canvas id = "canvas" width="840" height="640"></canvas>
+</div>
+<div id="my-gui-container">
+
+</div>
+Black line: X-axis <br>
+Blue line: Y-axis <br>
+Yellow line: Z-axis <br>
+
+</body>
+</html>
