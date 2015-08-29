@@ -2,132 +2,6 @@
 
 <script id="vertex-shader" type="x-shader/x-vertex">
 attribute vec4 vPosition;
-attribute vec3 vNormal;
-
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
-uniform mat3 normalMatrix;
-uniform mat3 viewMatrix;
-
-const int cNumLight = 2;
-uniform vec4 lightPosition[cNumLight];
-varying vec3 N, E;
-varying vec3 L[cNumLight];
-
-void
-main()
-{
-
-    vec3 pos = -(modelViewMatrix * vPosition).xyz;
-
-    for (int i = 0; i < cNumLight; i++) {
-      if (lightPosition[i].w == 0.0) L[i] = normalize(lightPosition[i].xyz);
-      else L[i] = normalize(lightPosition[i].xyz - pos);
-    }
-
-    E = normalize(-pos);
-    N = normalize( normalMatrix*vNormal.xyz);
-
-    gl_Position = projectionMatrix * modelViewMatrix * vPosition;
-
-}
-
-</script>
-<script id="fragment-shader" type="x-shader/x-fragment">
-precision mediump float;
-
-const int cNumLight = 2;
-
-uniform vec4 ambientProduct[cNumLight];
-uniform vec4 diffuseProduct[cNumLight];
-uniform vec4 specularProduct[cNumLight];
-uniform float shininess;
-uniform float attenuationA;
-uniform float attenuationB;
-
-varying vec3 N, E;
-varying vec3 L[cNumLight];
-
-void
-main()
-{
-  vec4 fColor;
-  vec3 H[cNumLight];
-  vec4 ambient[cNumLight];
-  float Kd[cNumLight];
-  vec4 diffuse[cNumLight];
-  float Ks[cNumLight];
-  vec4 specular[cNumLight];
-
-  for (int i = 0; i < cNumLight; i++) {
-    H[i] = normalize( L[i] + E );
-    ambient[i] = ambientProduct[i];
-    Kd[i] = max( dot(L[i], N), 0.0 );
-    diffuse[i] = Kd[i] * diffuseProduct[i];
-    Ks[i] = pow( max(dot(N, H[i]), 0.0), shininess );
-    specular[i] = Ks[i] * specularProduct[i];
-    if( dot(L[i], N) < 0.0 ) specular[i] = vec4(0.0, 0.0, 0.0, 1.0);
-    gl_FragColor = fColor;
-  }
-
-  fColor = ambient[0] + attenuationA * (diffuse[0] + specular[0]) + ambient[1] + attenuationB * (diffuse[1] + specular[1]);
-  fColor.a = 1.0;
-
-  gl_FragColor = clamp(fColor, vec4(0,0,0,1),vec4(1,1,1,1));
-}
-</script>
-<script id="vertex-shader-2" type="x-shader/x-vertex">
-    attribute vec4 vPosition;
-    attribute vec3 vNormal;
-
-    uniform mat4 modelViewMatrix;
-    uniform mat4 projectionMatrix;
-
-    uniform vec4 lightPosition;
-    uniform mat3 normalMatrix;
-    varying vec3 N, L, E;
-
-    void main() {
-      vec3 light;
-      vec3 pos = -(modelViewMatrix * vPosition).xyz;
-
-      if (lightPosition.w == 0.0) L = normalize(lightPosition.xyz);
-      else L = normalize(lightPosition.xyz - pos);
-      E = normalize(-pos);
-      N = normalize(normalMatrix * vNormal.xyz);
-      gl_Position = projectionMatrix * modelViewMatrix * vPosition;
-    }
-
-</script>
-<script id ="fragment-shader-2" type="x-shader/x-fragment">
-    precision mediump float;
-
-    uniform vec4 ambientProduct;
-    uniform vec4 diffuseProduct;
-    uniform vec4 specularProduct;
-    uniform float shininess;
-    uniform float attenuation;
-
-    varying vec3 N, L, E;
-
-    void main() {
-      vec4 fColor;
-      vec3 H = normalize( L + E);
-      vec4 ambient = ambientProduct;
-      float Kd = max( dot(L, N), 0.0);
-      vec4 diffuse = Kd*diffuseProduct;
-      float Ks = pow( max(dot(N, H), 0.0), shininess);
-      vec4 specular = Ks * specularProduct;
-      if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
-
-      fColor = ambient + attenuation * (diffuse + specular);
-      fColor.a = 1.0;
-
-      gl_FragColor = fColor;
-    }
-</script>
-<script id="vertex-shader-line" type="x-shader/x-vertex">
-attribute vec4 vPosition;
 uniform vec3 theta;
 uniform vec3 translate;
 uniform mat4 p;
@@ -175,7 +49,7 @@ main()
 }
 
 </script>
-<script id="fragment-shader-line" type="x-shader/x-fragment">
+<script id="fragment-shader" type="x-shader/x-fragment">
 precision mediump float;
 
 uniform vec4 fColor;
@@ -189,15 +63,15 @@ main()
 
 <head>
     <!-- Stylesheet for app -->
-    <link rel="stylesheet" type="text/css" href="./Assign3.css">
+<link rel="stylesheet" type="text/css" href="./Assign3.css">
     <!-- WebGl utilities -->
-    <script type="text/javascript" src="./Common/webgl-utils.js"></script>
-    <script type="text/javascript" src="./Common/initShaders.js"></script>
-    <script type="text/javascript" src="./Common/MV.js"></script>
-    <!-- User interface for controls -->
+<script type="text/javascript" src="./Common/webgl-utils.js"></script>
+<script type="text/javascript" src="./Common/initShaders.js"></script>
+<script type="text/javascript" src="./Common/MV.js"></script>
+<!-- User interface for controls -->
     <script type="text/javascript" src="./Common/dat.gui.min.js"></script>
     <!--CAD app -->
-    <script type="text/javascript" src="./assign4.js"></script>
+<script type="text/javascript" src="./assign3.js"></script>
 </head>
 
 <>
@@ -210,24 +84,9 @@ main()
 <div id="my-gui-container">
 
 </div>
-Red line: X-axis <br>
+Black line: X-axis <br>
 Blue line: Y-axis <br>
 Yellow line: Z-axis <br>
-<br>
-<br>
-
-There are 4 pull-down menus in gui:<br>
-Element: Add elements<br>
-<br>
-Camera: Move camera location<br>
-<br>
-Light1: Add light to scene, you can change distance, ambient, diffuse and specular lightning parameters, switch light on/off and
-animate light.<br>
-Animating will move light source. <br>
-<br>
-Light2: Add light to scene, you can change distance ambient, diffuse and specular lightning parameters, switch light on/off and
-animate light.<br>
-Animating will move light source.<br>
 
 </body>
 </html>
